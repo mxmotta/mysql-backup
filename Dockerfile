@@ -4,7 +4,7 @@ LABEL Maintainer="Marcelo Motta <marcelo.motta@sp.agence.com.br>"
 COPY --from=composer /usr/bin/composer /usr/bin/composer
 WORKDIR "/application"
 
-RUN docker-php-ext-install mysqli pdo pdo_mysql && docker-php-ext-enable pdo_mysql
+RUN docker-php-ext-install pdo pdo_mysql && docker-php-ext-enable pdo_mysql
 
 COPY . "/application"
 
