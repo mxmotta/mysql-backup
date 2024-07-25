@@ -42,12 +42,12 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
-          tags: ${{ steps.meta.outputs.tags }}
+          tags: latest
           labels: ${{ steps.meta.outputs.labels }}
 
-      - name: Generate artifact attestation
-        uses: actions/attest-build-provenance@v1
-        with:
-          subject-name: ${{ vars.REGISTRY }}/${{ github.event.repository.name }}
-          subject-digest: ${{ steps.push.outputs.digest }}
-          push-to-registry: true
+      # - name: Generate artifact attestation
+      #   uses: actions/attest-build-provenance@v1
+      #   with:
+      #     subject-name: ${{ vars.REGISTRY }}/${{ github.event.repository.name }}
+      #     subject-digest: ${{ steps.push.outputs.digest }}
+      #     push-to-registry: true
