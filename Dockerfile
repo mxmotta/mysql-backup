@@ -3,6 +3,7 @@ FROM php:8.3.8-cli-alpine
 LABEL Maintainer="Marcelo Motta <marcelo.motta@sp.agence.com.br>"
 COPY --from=composer /usr/bin/composer /usr/bin/composer
 
+ENV TZ=America/Bahia
 ARG WORKDIR=/application
 WORKDIR $WORKDIR
 
@@ -14,7 +15,7 @@ RUN addgroup -g $GID ${UNAME}
 RUN adduser -D -H -u $UID -G ${UNAME} -s /bin/sh ${UNAME}
 
 # Install packages
-RUN apk --no-cache add supervisor python3 && \
+RUN apk --no-cache add supervisor python3 tzdata && \
     docker-php-ext-install pdo pdo_mysql && \
     docker-php-ext-enable pdo_mysql
 
