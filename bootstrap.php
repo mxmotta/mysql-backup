@@ -1,5 +1,6 @@
 <?php
 
 $dotenv = \Dotenv\Dotenv::createImmutable(__DIR__);
-$dotenv->load();
-
+if (file_exists('.env')) {
+    $dotenv->load();
+}
