@@ -25,6 +25,9 @@ COPY php.ini /usr/local/etc/php/conf.d/custom.ini
 # Configure supervisord
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
+# Configure Crunz
+COPY crunz-example.yml crunz.yml
+
 # Configure cron
 RUN crontab -l | { cat; echo "* * * * * cd $WORKDIR && vendor/bin/crunz schedule:run >> /dev/null 2>&1"; } | crontab -
 
