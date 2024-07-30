@@ -1,5 +1,5 @@
 #
-name: Build and publish a Docker image to ghcr.io
+name: Build and publish a Docker image to Docker Hub
 
 # This workflow runs when any of the following occur:
 # - A push is made to a branch called `main` or `seed`
