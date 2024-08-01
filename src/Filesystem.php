@@ -5,6 +5,11 @@ namespace App;
 class Filesystem
 {
 
+    /**
+     * Verify and create a new directory
+     * @param string $dir
+     * @return void
+     */
     public static function createDir(string $dir): void
     {
         if (!is_dir($dir)) {
@@ -12,6 +17,12 @@ class Filesystem
         }
     }
 
+    /**
+     * Write into the file
+     * @param string $filename
+     * @param string $content
+     * @return void
+     */
     public static function writeFile(string $filename, string $content): void
     {
         if (!file_exists($filename)) {
@@ -38,6 +49,11 @@ class Filesystem
         }
     }
 
+    /**
+     * List files for the directory
+     * @param string $dir
+     * @return array
+     */
     public static function readDir(string $dir): array
     {
         $dir_content = [];
@@ -55,6 +71,12 @@ class Filesystem
         return $dir_content;
     }
 
+    /**
+     * Filter files for the specifc database
+     * @param array $files
+     * @param string $database
+     * @return array
+     */
     public static function databaseFiles(array $files, string $database): array
     {
         $files = array_filter($files, fn ($file) => str_starts_with($file, $database));
@@ -62,9 +84,14 @@ class Filesystem
         return $files;
     }
 
+    /**
+     * Delete file
+     * @param string $file
+     * @return void
+     */
     public static function deleteFile(string $file): void
     {
-        Log::info('Deleting file: ' . $file);
+        Log::warning('Deleting file: ' . $file);
         unlink($file);
     }
 }

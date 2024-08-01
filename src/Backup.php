@@ -10,6 +10,10 @@ use App\AwsClient;
 class Backup
 {
 
+    /**
+     * Run the backup
+     * @return void
+     */
     public static function run(): void
     {
         try {
@@ -22,13 +26,7 @@ class Backup
             $databases = explode(',', config('database.db'));
             $s3 = new AwsClient();
 
-            if (config('app.backup.destiny') == 'aws') {
-                $s3->init();
-            }
-
             foreach ($databases as $database) {
-
-
                 Log::line("Backuping database: " . $database);
                 $file = $backup_dir . '/' . $database . '-' . now()->format('Y-m-d-His') . '.sql';
                 Log::line("Creating dump file: " . $file);
@@ -39,21 +37,29 @@ class Backup
                 );
                 $dump->start($file);
 
-                $database_files = Filesystem::databaseFiles(Filesystem::readDir($backup_dir), $database);
+                if (config('app.backup.destiny') == 'aws') {
+                    Log::line("Starting upload");
+                    $s3->upload($file);
+                    Log::success('Upload finished');
+                    
+                    $iterator = $s3->listBucketObjects($backup_dir, $database);
+                    if($iterator['KeyCount'] > config('app.backup.max_files')){
+                        Log::info('Cleaning S3 Bucket oldest files');
+                        foreach (array_splice($iterator['Contents'], config('app.backup.max_files')) as $file) {
+                            $s3->deleteObject($file['Key']);
+                        }
+                    }
 
+                }
+                
+                $database_files = Filesystem::databaseFiles(Filesystem::readDir($backup_dir), $database);
                 if (count($database_files) > config('app.backup.max_files')) {
+                    Log::info('Cleaning local oldest files');
                     foreach (array_splice($database_files, config('app.backup.max_files')) as $file) {
                         Filesystem::deleteFile($backup_dir . '/' . $file);
                     }
                 }
 
-                if (config('app.backup.destiny') == 'aws') {
-                    Log::line("Starting upload");
-                    $s3->upload($file);
-                    Log::success('Upload finished');
-                    Log::line('Deleting file');
-                    Filesystem::deleteFile($file);
-                }
                 Log::success('Done');
             }
             Log::success('Backup routine finished at ' . now()->format('Y-m-d H:i:s'));
