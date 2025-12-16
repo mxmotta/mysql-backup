@@ -45,7 +45,9 @@ class Backup
                     $iterator = $s3->listBucketObjects($backup_dir, $database);
                     if($iterator['KeyCount'] > config('app.backup.max_files')){
                         Log::info('Cleaning S3 Bucket oldest files');
-                        foreach (array_splice($iterator['Contents'], config('app.backup.max_files')) as $file) {
+                        $files = array_splice($iterator['Contents'], config('app.backup.max_files'));
+                        $files = array_reverse($files);
+                        foreach ($files as $file) {
                             $s3->deleteObject($file['Key']);
                         }
                     }
